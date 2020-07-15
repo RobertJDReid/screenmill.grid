@@ -1,7 +1,7 @@
 #
 #********************************************************************
 #
-#  Functions to modify grids that failed `screenmill_calibrate`
+#  Functions to modify grids that failed screenmill_calibrate
 #
 #  Almost all of these borrowed from Eric Edward Bryant
 #
@@ -9,10 +9,10 @@
 #
 #                   read_plate function
 #
-# reads screenmill-annotation and -calibration data for a specific `plate_id`
+# reads screenmill-annotation and -calibration data for a specific plate_id
 #
 # Input
-#   plate : a `plate_id` from screenmill annotations
+#   plate : a plate_id from screenmill annotations
 #   dir : a directory containing screenmill data files
 #   view : whether to display an image of the plate with grid overlay - if available
 #
