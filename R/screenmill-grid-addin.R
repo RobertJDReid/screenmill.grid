@@ -519,7 +519,7 @@ sm_regrid <- function(plate_obj,grid_rows,grid_cols,replicates,colony_radius=1,m
     # Annotate result with template, position, strain collection and plate
     result <-
       mutate(result,
-             template             = plate_obj$annotemplate,
+             template             = plate_obj$anno$template,
              position             = plate_obj$anno$position,
              group                = plate_obj$anno$group,
              strain_collection_id = plate_obj$anno$strain_collection_id,
