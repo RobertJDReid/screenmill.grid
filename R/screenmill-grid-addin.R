@@ -495,7 +495,7 @@ use_calibration_from <- function(acceptor, donor) {
 #' @param max_smooth defaults to 5
 #' @export
 
-sm_regrid <- function(plate_obj,grid_rows,grid_cols,replicates,colony_radius=1,max_smooth=5) {
+sm_regrid <- function(plate_obj,grid_rows,grid_cols,replicates,colony_radius=1,max_smooth=5,view=TRUE) {
   p                <- plate_obj$anno$position
   collection_id    <- plate_obj$anno$strain_collection_id
   collection_plate <- plate_obj$anno$plate
@@ -587,7 +587,6 @@ sm_regrid <- function(plate_obj,grid_rows,grid_cols,replicates,colony_radius=1,m
     #    }
   }
 
-  if (display || save_plate) display_plate(cropped, result, template, group, p, text.color = 'red', grid.color = 'blue', save_plate)
-
-  return(result)
+  if (view) view_plate(result)
+  return(invisible(result))
 }
