@@ -522,7 +522,8 @@ sm_regrid <- function(plate_obj,grid_rows,grid_cols,replicates,colony_radius=1,m
              template             = plate_obj$annotemplate,
              position             = plate_obj$anno$position,
              group                = plate_obj$anno$group,
-             strain_collection_id = plate_obj$anno$strain_collection_id
+             strain_collection_id = plate_obj$anno$strain_collection_id,
+             plate                = plate_obj$anno$plate
              )
 
     # Check the grid size and compare to expected plate size
@@ -544,7 +545,7 @@ sm_regrid <- function(plate_obj,grid_rows,grid_cols,replicates,colony_radius=1,m
     sqrt_rep <- sqrt(replicates)
     n_rows   <- grid_rows/sqrt_rep
     n_cols   <- grid_cols/sqrt_rep
-    one_mat  <- matrix(rep(1, times = nrow(keyi)), nrow = n_rows, ncol = n_cols)
+    one_mat  <- matrix(rep(1, times = n_rows*n_cols), nrow = n_rows, ncol = n_cols)
 
     rep_df <-
       (one_mat %x% matrix(1:replicates, byrow = T, ncol = sqrt_rep)) %>%
