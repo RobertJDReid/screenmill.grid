@@ -6,6 +6,9 @@
 \usage{
 save_plate_calibration(plate)
 }
+\arguments{
+\item{plate}{A plate object constructed with the `read_plate` function}
+}
 \description{
 saves modified annotation data to the appropriate screenmill
 files after modifications

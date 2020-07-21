@@ -4,7 +4,14 @@
 \alias{sm_regrid}
 \title{sm_regrid}
 \usage{
-sm_regrid(plate_obj, grid_rows, grid_cols, replicates)
+sm_regrid(
+  plate_obj,
+  grid_rows,
+  grid_cols,
+  replicates,
+  colony_radius = 1,
+  max_smooth = 5
+)
 }
 \arguments{
 \item{plate_obj}{a screenmill plate object loaded by the read_plate function}
@@ -15,6 +22,10 @@ sm_regrid(plate_obj, grid_rows, grid_cols, replicates)
 
 \item{replicates}{number of replicates in each plate grid. This is always a square; e.g.
 1,4,16}
+
+\item{colony_radius}{defaults to 1}
+
+\item{max_smooth}{defaults to 5}
 }
 \description{
 Input: a plate object from the `read_plate` function which contains

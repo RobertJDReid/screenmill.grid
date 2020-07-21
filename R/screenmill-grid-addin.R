@@ -1,11 +1,11 @@
 #
-#********************************************************************
+# ************************************************************
 #
 #  Functions to modify grids that failed screenmill_calibrate
 #
 #  Almost all of these borrowed from Eric Edward Bryant
 #
-# ----------------------------------------------------------
+# ------------------------------------------------------------
 #
 #                   read_plate function
 #
@@ -415,7 +415,7 @@ sm_rotate_crop <- function(plate,
 #' saves modified annotation data to the appropriate screenmill
 #' files after modifications
 #'
-#' @param plate
+#' @param plate A plate object constructed with the `read_plate` function
 #' @export
 
 save_plate_calibration <- function(plate) {
@@ -491,15 +491,15 @@ use_calibration_from <- function(acceptor, donor) {
 #' @param grid_cols number of colony columns on plate image
 #' @param replicates number of replicates in each plate grid. This is always a square; e.g.
 #' 1,4,16
+#' @param colony_radius defaults to 1
+#' @param max_smooth defaults to 5
 #' @export
 
-sm_regrid <- function(plate_obj,grid_rows,grid_cols,replicates) {
+sm_regrid <- function(plate_obj,grid_rows,grid_cols,replicates,colony_radius=1,max_smooth=5) {
   p                <- plate_obj$anno$position
   collection_id    <- plate_obj$anno$strain_collection_id
   collection_plate <- plate_obj$anno$plate
   group            <- plate_obj$anno$group
-  colony_radius    <- 1
-  max_smooth       <- 5
   #finei            <- fine[which(fine$position == p), ] # row of fine crop info - don't care, already cropped
   #keyi  <- with(key, key[which(strain_collection_id == collection_id & plate == collection_plate), ]) # rows of key info for plate
   #plate <- plate_obj$img
