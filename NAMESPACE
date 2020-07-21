@@ -3,6 +3,7 @@
 export(align_grid_row)
 export(justify_grid_edge)
 export(read_plate)
+export(regrid)
 export(save_plate_calibration)
 export(shift_crop)
 export(shift_grid)

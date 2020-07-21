@@ -476,3 +476,107 @@ use_calibration_from <- function(acceptor, donor) {
   result <- update_plate(donor)
   return(invisible(result))
 }
+
+#---------------------------------------------------------------------------
+#
+#' sm_regrid
+#'
+#' Input: a plate object from the `read_plate` function which contains
+#' annotation, crop and grid data for a specific plate image.
+#' Grid data is replaced by a call to `screenmill:::locate_grid`.
+#' Used to either redo a grid or make a de novo grid after fixing crop issues
+#'
+#' @param plate a screenmill plate object loaded by the read_plate function
+#' @export
+
+regrid <- function(plate_obj,grid_rows,grid_cols,replicates) {
+  p                <- plate_obj$anno$position
+  collection_id    <- plate_obj$anno$strain_collection_id
+  collection_plate <- plate_obj$anno$plate
+  group            <- plate_obj$anno$group
+  #finei            <- fine[which(fine$position == p), ] # row of fine crop info - don't care, already cropped
+  keyi  <- with(key, key[which(strain_collection_id == collection_id & plate == collection_plate), ]) # rows of key info for plate
+  #plate <- plate_obj$img
+
+  #if (invert) plate <- 1 - plate
+  #rotated <- EBImage::rotate(plate, finei$rotate)
+  #cropped <- with(finei, rotated[fine_l:fine_r, fine_t:fine_b])
+
+  result <- screenmill:::locate_grid(plate_obj$img, grid_rows, grid_cols, radius = colony_radius, max_smooth = max_smooth)
+
+  if (is.null(result)) {
+    warning(
+      'Failed to locate colony grid for ', plate_obj$anno$plate_id,
+      ' at position ', p, '. This plate position has been skipped.\n',
+      call. = FALSE)
+  } else {
+    # Annotate result with template, position, strain collection and plate
+    result <-
+      mutate(result, template = plate_obj$annotemplate, position = plate_obj$anno$position) %>%
+      left_join(mutate(anno, template = basename(template)), by = c('template', 'position'))
+
+    # Check the grid size and compare to expected plate size
+    #replicates <- nrow(result) / nrow(keyi)
+
+    # if (sqrt(replicates) %% 1 != 0) {
+    #   result <- NULL
+    #   warning(
+    #     'Size of detected colony grid (', nrow(result), ') for ',
+    #     basename(template), ' at position ', p,
+    #     ' is not a square multiple of the number of annotated positions (',
+    #     nrow(keyi), ') present in the key for ', collection_id,
+    #     ' plate #', collection_plate, '. This plate position has been skipped.\n', call. = FALSE
+    #   )
+    #    } else {
+    # Annotate with key row/column/replicate values
+    #key_rows <- sort(unique(keyi$row))
+    #key_cols <- sort(unique(keyi$column))
+    sqrt_rep <- sqrt(replicates)
+    n_rows   <- grid_rows/sqrt_rep
+    n_cols   <- grid_cols/sqrt_rep
+    one_mat  <- matrix(rep(1, times = nrow(keyi)), nrow = n_rows, ncol = n_cols)
+
+    rep_df <-
+      (one_mat %x% matrix(1:replicates, byrow = T, ncol = sqrt_rep)) %>%
+      as.data.frame %>%
+      tibble::rownames_to_column('colony_row') %>%
+      gather('colony_col', 'replicate', starts_with('V')) %>%
+      mutate(
+        colony_row = as.integer(colony_row),
+        colony_col = as.integer(gsub('V', '', colony_col)),
+        replicate  = as.integer(replicate)
+      )
+
+    col_df <-
+      matrix(rep(key_cols, each = n_rows * replicates), ncol = n_cols * sqrt_rep) %>%
+      as.data.frame %>%
+      tibble::rownames_to_column('colony_row') %>%
+      gather('colony_col', 'column', starts_with('V')) %>%
+      mutate(
+        colony_row = as.integer(colony_row),
+        colony_col = as.integer(gsub('V', '', colony_col))
+      )
+
+    row_df <-
+      matrix(rep(key_rows, each = n_cols * replicates), nrow = n_rows * sqrt_rep, byrow = T) %>%
+      as.data.frame %>%
+      tibble::rownames_to_column('colony_row') %>%
+      gather('colony_col', 'row', starts_with('V')) %>%
+      mutate(
+        colony_row = as.integer(colony_row),
+        colony_col = as.integer(gsub('V', '', colony_col))
+      )
+
+    result <-
+      result %>%
+      left_join(row_df, by = c('colony_row', 'colony_col')) %>%
+      left_join(col_df, by = c('colony_row', 'colony_col')) %>%
+      left_join(rep_df, by = c('colony_row', 'colony_col')) %>%
+      select(template:replicate, colony_row:b, everything())
+    #    }
+  }
+
+  if (display || save_plate) display_plate(cropped, result, template, group, p, text.color = 'red', grid.color = 'blue', save_plate)
+
+  return(result)
+}
