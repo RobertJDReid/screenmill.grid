@@ -486,10 +486,14 @@ use_calibration_from <- function(acceptor, donor) {
 #' Grid data is replaced by a call to `screenmill:::locate_grid`.
 #' Used to either redo a grid or make a de novo grid after fixing crop issues
 #'
-#' @param plate a screenmill plate object loaded by the read_plate function
+#' @param plate_obj a screenmill plate object loaded by the read_plate function
+#' @param grid_rows number of colony rows on plate image
+#' @param grid_cols number of colony columns on plate image
+#' @param replicates number of replicates in each plate grid. This is always a square; e.g.
+#' 1,4,16
 #' @export
 
-regrid <- function(plate_obj,grid_rows,grid_cols,replicates) {
+sm_regrid <- function(plate_obj,grid_rows,grid_cols,replicates) {
   p                <- plate_obj$anno$position
   collection_id    <- plate_obj$anno$strain_collection_id
   collection_plate <- plate_obj$anno$plate
