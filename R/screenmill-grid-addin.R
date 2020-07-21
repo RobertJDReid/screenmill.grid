@@ -508,17 +508,17 @@ sm_regrid <- function(plate_obj,grid_rows,grid_cols,replicates,colony_radius=1,m
   #rotated <- EBImage::rotate(plate, finei$rotate)
   #cropped <- with(finei, rotated[fine_l:fine_r, fine_t:fine_b])
 
-  result <- screenmill:::locate_grid(plate_obj$img, grid_rows, grid_cols, radius = colony_radius, max_smooth = max_smooth)
+  grid_result <- screenmill:::locate_grid(plate_obj$img, grid_rows, grid_cols, radius = colony_radius, max_smooth = max_smooth)
 
-  if (is.null(result)) {
+  if (is.null(grid_result)) {
     warning(
       'Failed to locate colony grid for ', plate_obj$anno$plate_id,
       ' at position ', p, '. This plate position has been skipped.\n',
       call. = FALSE)
   } else {
-    # Annotate result with template, position, strain collection and plate
-    result <-
-      mutate(result,
+    # Annotate grid_result with template, position, strain collection and plate
+    grid_result <-
+      mutate(grid_result,
              template             = plate_obj$anno$template,
              position             = plate_obj$anno$position,
              group                = plate_obj$anno$group,
@@ -527,12 +527,12 @@ sm_regrid <- function(plate_obj,grid_rows,grid_cols,replicates,colony_radius=1,m
              )
 
     # Check the grid size and compare to expected plate size
-    #replicates <- nrow(result) / nrow(keyi)
+    #replicates <- nrow(grid_result) / nrow(keyi)
 
     # if (sqrt(replicates) %% 1 != 0) {
-    #   result <- NULL
+    #   grid_result <- NULL
     #   warning(
-    #     'Size of detected colony grid (', nrow(result), ') for ',
+    #     'Size of detected colony grid (', nrow(grid_result), ') for ',
     #     basename(template), ' at position ', p,
     #     ' is not a square multiple of the number of annotated positions (',
     #     nrow(keyi), ') present in the key for ', collection_id,
@@ -578,15 +578,15 @@ sm_regrid <- function(plate_obj,grid_rows,grid_cols,replicates,colony_radius=1,m
         colony_col = as.integer(gsub('V', '', colony_col))
       )
 
-    result <-
-      result %>%
+    grid_result <-
+      grid_result %>%
       left_join(row_df, by = c('colony_row', 'colony_col')) %>%
       left_join(col_df, by = c('colony_row', 'colony_col')) %>%
       left_join(rep_df, by = c('colony_row', 'colony_col')) %>%
       select(template:replicate, colony_row:b, everything())
-    #    }
   }
+  plate_obj$grid <- grid_result
 
-  if (view) view_plate(result)
-  return(invisible(result))
+  if (view) view_plate(plate_obj)
+  return(invisible(plate_obj))
 }
