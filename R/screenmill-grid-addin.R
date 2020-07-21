@@ -498,8 +498,10 @@ sm_regrid <- function(plate_obj,grid_rows,grid_cols,replicates) {
   collection_id    <- plate_obj$anno$strain_collection_id
   collection_plate <- plate_obj$anno$plate
   group            <- plate_obj$anno$group
+  colony_radius    <- 1
+  max_smooth       <- 5
   #finei            <- fine[which(fine$position == p), ] # row of fine crop info - don't care, already cropped
-  keyi  <- with(key, key[which(strain_collection_id == collection_id & plate == collection_plate), ]) # rows of key info for plate
+  #keyi  <- with(key, key[which(strain_collection_id == collection_id & plate == collection_plate), ]) # rows of key info for plate
   #plate <- plate_obj$img
 
   #if (invert) plate <- 1 - plate
