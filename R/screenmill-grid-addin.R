@@ -540,11 +540,11 @@ sm_regrid <- function(plate_obj,grid_rows,grid_cols,replicates,colony_radius=1,m
     #   )
     #    } else {
     # Annotate with key row/column/replicate values
-    #key_rows <- sort(unique(keyi$row))
-    #key_cols <- sort(unique(keyi$column))
     sqrt_rep <- sqrt(replicates)
-    n_rows   <- grid_rows/sqrt_rep
-    n_cols   <- grid_cols/sqrt_rep
+    key_rows   <- 1:(grid_rows/sqrt_rep)
+    key_cols   <- 1:(grid_cols/sqrt_rep)
+    n_rows   <- length(key_rows)
+    n_cols   <- length(key_cols)
     one_mat  <- matrix(rep(1, times = n_rows*n_cols), nrow = n_rows, ncol = n_cols)
 
     rep_df <-
