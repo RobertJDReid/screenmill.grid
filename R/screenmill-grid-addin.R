@@ -585,7 +585,11 @@ sm_regrid <- function(plate_obj,grid_rows,grid_cols,replicates,colony_radius=1,m
       left_join(rep_df, by = c('colony_row', 'colony_col')) %>%
       select(template:replicate, colony_row:b, everything())
   }
+  if (nrow(grid_result) > 0) {
+    grid_result$excluded <- FALSE
+  }
   plate_obj$grid <- grid_result
+
 
   if (view) view_plate(plate_obj)
   return(invisible(plate_obj))
