@@ -21,6 +21,7 @@
 
 #' read a single screenmill plate and annotation data by plate_id and display
 #'
+#' @importFrom magrittr %>%
 #' @param plate plate id from a screenmill annotation
 #' @param dir directory containing screenmill data files
 #' @param view logical display plate with grid defaults to TRUE
