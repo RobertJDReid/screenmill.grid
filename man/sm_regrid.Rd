@@ -10,7 +10,8 @@ sm_regrid(
   grid_cols,
   replicates,
   colony_radius = 1,
-  max_smooth = 5
+  max_smooth = 5,
+  view = TRUE
 )
 }
 \arguments{

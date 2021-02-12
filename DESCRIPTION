@@ -1,12 +1,15 @@
 Package: screenmill.grid
 Type: Package
-Title: What the Package Does (Title Case)
+Title: screenmill grid manipulation functions
 Version: 0.1.6
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Authors@R: c(
+    person("Robert", "Reid", email = "rr381@cumc.columbia.edu", role = c("aut","cre")),
+    person("Eric", "Bryant", email = "eeb2139@columbia.edu", role = c("aut")))
+Maintainer: 'Robert Reid' <rr381@cumc.columbia.edu>
+Description: Collection of functions to modify colony grids in screenmill data.
+    Helps to fix calibration errors for incorrectly cropped plates by moving
+    or resizing crop values or modifying individual grid positions
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1
