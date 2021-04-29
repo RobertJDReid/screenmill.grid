@@ -30,5 +30,18 @@ shift_grid_cell(
 \item{view}{logical display plate with grid defaults to TRUE}
 }
 \description{
-
+Adds a conditional to shift grid so that grid can be moved by colony_row,
+   colony_col or both to specify a specific cell. The conditional should
+   be captured with `quo` as such:
+        cond = quo(colony_row == 16 & colony_col%in%c(14:22))
+}
+\details{
+`shift_grid_cell` adds a quoted conditional so that grid elements
+   can be moved by any combination of colony_row and colony_col.
+   This can be used to specify a specific cell. The conditional needs to
+   be captured with `quo` as in this example:
+        `cond = quo(colony_row == 16 & colony_col%in%c(14:22))`
+   The above conditional would affect only the grid positions in
+   row16 and colonies 14 to 22 and affect whichever grid element is
+   specified in the `left`, `right`,`up` or `down` parameters
 }

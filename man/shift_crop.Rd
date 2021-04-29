@@ -18,8 +18,6 @@ shift_crop(plate, left = 0, right = 0, up = 0, down = 0, view = TRUE)
 \item{down}{number of pixels to move grid down}
 
 \item{view}{logical display plate with grid defaults to TRUE}
-
-\item{cond}{a quoted conditional statement to select range of rows or cols}
 }
 \description{
 shifts the crop of a plate by the specified pixel amount in the specified

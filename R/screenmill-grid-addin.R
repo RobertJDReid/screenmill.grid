@@ -21,10 +21,12 @@
 
 #' read a single screenmill plate and annotation data by plate_id and display
 #'
-#' @importFrom magrittr %>%
 #' @param plate plate id from a screenmill annotation
 #' @param dir directory containing screenmill data files
 #' @param view logical display plate with grid defaults to TRUE
+#' @importFrom dplyr semi_join
+#' @importFrom tibble lst
+#' @importFrom readr cols
 #' @export
 
 read_plate <- function(plate = "2016-03-02-001-001-003", # or a previously read plate
@@ -117,7 +119,7 @@ shift_grid <- function(plate,
 #'   Adds a conditional to shift grid so that grid can be moved by colony_row,
 #'    colony_col or both to specify a specific cell. The conditional should
 #'    be captured with `quo` as such:
-#'      \code{cond = quo(colony_row == 16 & colony_col%in%c(14:22))}
+#'         cond = quo(colony_row == 16 & colony_col%in%c(14:22))
 #'
 #' @param plate a screenmill plate object loaded by the read_plate function
 #' @param cond a quoted conditional statement to select range of rows or cols
@@ -126,6 +128,17 @@ shift_grid <- function(plate,
 #' @param up number of pixels to move grid up
 #' @param down number of pixels to move grid down
 #' @param view logical display plate with grid defaults to TRUE
+#' @importFrom dplyr mutate if_else %>%
+#' @details
+#'   `shift_grid_cell` adds a quoted conditional so that grid elements
+#'    can be moved by any combination of colony_row and colony_col.
+#'    This can be used to specify a specific cell. The conditional needs to
+#'    be captured with `quo` as in this example:
+#'         `cond = quo(colony_row == 16 & colony_col%in%c(14:22))`
+#'    The above conditional would affect only the grid positions in
+#'    row16 and colonies 14 to 22 and affect whichever grid element is
+#'    specified in the `left`, `right`,`up` or `down` parameters
+#'
 #' @export
 #
 #
@@ -212,6 +225,8 @@ justify_grid_edge <- function(plate,cond,side="t",fcn,view=TRUE) {
 #'
 #' @param plate plate id from a screenmill annotation
 #' @param view logical display plate with grid defaults to TRUE
+#' @importFrom dplyr group_by ungroup
+#' @importFrom stats median
 #' @export
 
 standardize_grid <- function(plate,view=TRUE) {
@@ -247,6 +262,19 @@ standardize_grid <- function(plate,view=TRUE) {
 #' @param cond a quoted conditional statement to select range of rows or cols
 #' @param side one of "t", "b"
 #' @param view logical display plate with grid defaults to TRUE
+#'
+#' @details
+#'   `align_grid_row` adds a quoted conditional so that grid elements
+#'    can be moved by any combination of colony_row and colony_col.
+#'    This can be used to specify a specific cell. The conditional needs to
+#'    be captured with `quo` as in this example:
+#'         `cond = quo(colony_col%in%c(14:22))`
+#'    The above conditional would affect only columns
+#'    14 to 22 and affect whichever grid element is
+#'    specified in the `t`, or `b` parameters
+#'
+#' @importFrom dplyr filter pull
+#' @importFrom rlang .data
 #' @export
 
 align_grid_row <- function(plate,cond,side="t", view=TRUE) {
@@ -255,28 +283,28 @@ align_grid_row <- function(plate,cond,side="t", view=TRUE) {
     # compute highest cells in selected row
     a_top <- plate$grid %>%
       filter(!!cond) %>%
-      pull(t) %>%
+      pull(.data$t) %>%
       min()
     #message (paste0("a_top = ",a_top))
     plate$grid <-
       plate$grid %>%
       mutate(
-        y = if_else (!!cond,y + (a_top - t),y),
-        t = if_else (!!cond,t + (a_top - t),t),
-        b = if_else (!!cond,b + (a_top - t),b)
+        y = if_else (!!cond,.data$y + (a_top - .data$t),.data$y),
+        t = if_else (!!cond,.data$t + (a_top - .data$t),.data$t),
+        b = if_else (!!cond,.data$b + (a_top - .data$t),.data$b)
       )
   } else if (side == "b") {
     a_bot <- plate$grid %>%
       filter(!!cond) %>%
-      pull(b) %>%
+      pull(.data$b) %>%
       max()
     message (paste0("a_bot = ",a_bot))
     plate$grid <-
       plate$grid %>%
       mutate(
-        y = if_else (!!cond,y + (b - a_bot),y),
-        t = if_else (!!cond,t + (b - a_bot),t),
-        b = if_else (!!cond,b + (b - a_bot),b)
+        y = if_else (!!cond,.data$y + (.data$b - a_bot),.data$y),
+        t = if_else (!!cond,.data$t + (.data$b - a_bot),.data$t),
+        b = if_else (!!cond,.data$b + (.data$b - a_bot),.data$b)
       )
   } else warning ('parameter side must be one of "t" or "b"')
   if (view) view_plate(plate)
@@ -285,7 +313,7 @@ align_grid_row <- function(plate,cond,side="t", view=TRUE) {
 
 #------------------------------------------------------------------
 #
-#'    morph_grid_cell
+#'    morph_grid_cell | sm_resize_grid_cell
 #'
 #'   Modifies grid by specific edges in order to shrink or expand as necessary
 #'     to capture data or avoid plate anomalies (shadows/reflections/contaminants)
@@ -300,8 +328,19 @@ align_grid_row <- function(plate,cond,side="t", view=TRUE) {
 #' @param up number of pixels to move grid up
 #' @param down number of pixels to move grid down
 #' @param view logical display plate with grid defaults to TRUE
+#'
+#' @details
+#'   `sm_resize_grid_cell` adds a quoted conditional so that grid elements
+#'    can be altered by any combination of colony_row and colony_col.
+#'    This can be used to specify a specific cell. The conditional needs to
+#'    be captured with `quo` as in this example:
+#'         `cond = quo(colony_row == 16 & colony_col%in%c(14:22))`
+#'    The above conditional would affect only the grid positions in
+#'    row16 and colonies 14 to 22 and affect whichever grid element is
+#'    specified in the `left`, `right`,`up` or `down` parameters
+#'
+#' @importFrom dplyr if_else
 #' @export
-#' @alias morph_grid_cell
 
 sm_resize_grid_cell <- function(plate,cond,
                             left = 0, right = 0, up = 0, down = 0,
@@ -319,7 +358,7 @@ sm_resize_grid_cell <- function(plate,cond,
   if (view) view_plate(plate)
   return(invisible(plate))
 }
-morph_grid_cell = sm_resize_grid_cell
+morph_grid_cell <- sm_resize_grid_cell
 
 #---------------------------------------------------------------------------
 #
@@ -329,12 +368,14 @@ morph_grid_cell = sm_resize_grid_cell
 #' direction
 #'
 #' @param plate a screenmill plate object loaded by the read_plate function
-#' @param cond a quoted conditional statement to select range of rows or cols
 #' @param left number of pixels to move grid to the left
 #' @param right number of pixels to move grid to the right
 #' @param up number of pixels to move grid up
 #' @param down number of pixels to move grid down
 #' @param view logical display plate with grid defaults to TRUE
+#'
+#'
+#' @importFrom dplyr mutate
 #' @export
 
 shift_crop <- function(plate,
@@ -365,6 +406,7 @@ shift_crop <- function(plate,
 #' @param up number of pixels to move top grid-edge up, negative moves it down
 #' @param down number of pixels to move bottom grid-edge down, negative moves it up
 #' @param view logical display plate with grid defaults to TRUE
+#' @importFrom dplyr mutate
 #' @export
 
 sm_resize_crop <- function(plate,
@@ -394,6 +436,7 @@ sm_resize_crop <- function(plate,
 #' @param plate a screenmill plate object loaded by the read_plate function
 #' @param rotate number of pixels to move grid to the left
 #' @param view logical display plate with grid defaults to TRUE
+#' @importFrom dplyr mutate
 #' @export
 
 sm_rotate_crop <- function(plate,
@@ -417,6 +460,8 @@ sm_rotate_crop <- function(plate,
 #' files after modifications
 #'
 #' @param plate A plate object constructed with the `read_plate` function
+#' @importFrom dplyr anti_join bind_rows
+#' @importFrom readr write_csv read_csv cols
 #' @export
 
 save_plate_calibration <- function(plate) {
@@ -494,6 +539,9 @@ use_calibration_from <- function(acceptor, donor) {
 #' 1,4,16
 #' @param colony_radius defaults to 1
 #' @param max_smooth defaults to 5
+#' @importFrom dplyr left_join select
+#' @importFrom tidyr gather
+#' @importFrom tidyselect starts_with everything
 #' @export
 
 sm_regrid <- function(plate_obj,grid_rows,grid_cols,replicates,colony_radius=1,max_smooth=5,view=TRUE) {

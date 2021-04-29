@@ -2,7 +2,7 @@
 % Please edit documentation in R/screenmill-grid-addin.R
 \name{sm_resize_grid_cell}
 \alias{sm_resize_grid_cell}
-\title{morph_grid_cell}
+\title{morph_grid_cell | sm_resize_grid_cell}
 \usage{
 sm_resize_grid_cell(
   plate,
@@ -35,4 +35,14 @@ Modifies grid by specific edges in order to shrink or expand as necessary
     Uses a conditional as in shift_grid_cell so that specific cells/rows/cols can be
     modified. x and y are recalculated when cells are updated. Positive values for
     left,right,up,down move named grid edges in that direction, negative values reverse this
+}
+\details{
+`sm_resize_grid_cell` adds a quoted conditional so that grid elements
+   can be altered by any combination of colony_row and colony_col.
+   This can be used to specify a specific cell. The conditional needs to
+   be captured with `quo` as in this example:
+        `cond = quo(colony_row == 16 & colony_col%in%c(14:22))`
+   The above conditional would affect only the grid positions in
+   row16 and colonies 14 to 22 and affect whichever grid element is
+   specified in the `left`, `right`,`up` or `down` parameters
 }

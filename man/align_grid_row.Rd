@@ -18,3 +18,13 @@ align_grid_row(plate, cond, side = "t", view = TRUE)
 \description{
 align_grid_row
 }
+\details{
+`align_grid_row` adds a quoted conditional so that grid elements
+   can be moved by any combination of colony_row and colony_col.
+   This can be used to specify a specific cell. The conditional needs to
+   be captured with `quo` as in this example:
+        `cond = quo(colony_col%in%c(14:22))`
+   The above conditional would affect only columns
+   14 to 22 and affect whichever grid element is
+   specified in the `t`, or `b` parameters
+}
