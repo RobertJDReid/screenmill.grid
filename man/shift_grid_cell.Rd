@@ -7,10 +7,10 @@
 shift_grid_cell(
   plate,
   cond,
-  left = 0,
-  right = 0,
-  up = 0,
-  down = 0,
+  left = 0L,
+  right = 0L,
+  up = 0L,
+  down = 0L,
   view = TRUE
 )
 }
