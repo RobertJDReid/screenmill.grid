@@ -143,8 +143,12 @@ shift_grid <- function(plate,
 #
 #
 shift_grid_cell <- function(plate,cond,
-                            left = 0L, right = 0L, up = 0L, down = 0L,
+                            left = 0, right = 0, up = 0, down = 0,
                             view = TRUE) {
+  left = as.integer(left)
+  right = as.integer(right)
+  up = as.integer(up)
+  down = as.integer(down)
   plate$grid <-
     plate$grid %>%
     mutate(
