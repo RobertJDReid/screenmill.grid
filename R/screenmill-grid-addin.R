@@ -188,14 +188,14 @@ justify_grid_edge <- function(plate,cond,side="t",fcn,view=TRUE) {
         plate$grid %>%
         mutate(
           t = if_else (!!cond,target_value,t),
-          y = if_else (!!cond,t + (b - t)%/%2,y),
+          y = if_else (!!cond,t + (b - t)%/%2L,y),
         )
     } else { # else `b`
       plate$grid <-
         plate$grid %>%
         mutate(
           b = if_else (!!cond,target_value,b),
-          y = if_else (!!cond,t + (b - t)%/%2,y),
+          y = if_else (!!cond,t + (b - t)%/%2L,y),
         )
     }
  # left or right
@@ -205,14 +205,14 @@ justify_grid_edge <- function(plate,cond,side="t",fcn,view=TRUE) {
         plate$grid %>%
         mutate(
           l = if_else (!!cond,target_value,t),
-          x = if_else (!!cond,t + (r - l)%/%2,x),
+          x = if_else (!!cond,t + (r - l)%/%2L,x),
         )
     } else { # else `r`
         plate$grid <-
           plate$grid %>%
           mutate(
             r = if_else (!!cond,target_value,t),
-            x = if_else (!!cond,t + (r - l)%/%2,x),
+            x = if_else (!!cond,t + (r - l)%/%2L,x),
           )
       }
   }
@@ -352,8 +352,8 @@ sm_resize_grid_cell <- function(plate,cond,
   plate$grid <-
     plate$grid %>%
     mutate(
-      x = if_else (!!cond,x + (right - left)%/%2,x),
-      y = if_else (!!cond,y + (down - up)%/%2,y),
+      x = if_else (!!cond,x + (right - left)%/%2L,x),
+      y = if_else (!!cond,y + (down - up)%/%2L,y),
       l = if_else (!!cond,l - left,l),
       r = if_else (!!cond,r + right,r),
       t = if_else (!!cond,t - up,t),
