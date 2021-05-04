@@ -39,7 +39,13 @@ read_plate <- function(plate = "2016-03-02-001-001-003", # or a previously read 
     semi_join(anno, by = c("template", "position"))
 
   grid <-
-    read_csv(file.path(dir, 'screenmill-calibration-grid.csv'), col_types = cols()) %>%
+    read_csv(file.path(dir, 'screenmill-calibration-grid.csv'), col_types = cols(
+      position = col_integer(), group = col_integer(), plate = col_integer(),
+      row = col_integer(), column = col_integer(), replicate = col_integer(),
+      colony_row = col_integer(), colony_col = col_integer(), x = col_integer(),
+      y = col_integer(),l = col_integer(),r = col_integer(),t = col_integer(),
+      b = col_integer(),excluded = col_logical()
+    )) %>%
     semi_join(anno, by = c("template", "position"))
 
   path <- file.path(dir, anno$file)
@@ -235,7 +241,7 @@ justify_grid_edge <- function(plate,cond,side="t",fcn,view=TRUE) {
 
 standardize_grid <- function(plate,view=TRUE) {
   #
-  # Note, these values are col_coubles in plate annotation data
+  # Note, these values are col_doubles in plate annotation data
   #
   plate$grid <-
     plate$grid %>%
