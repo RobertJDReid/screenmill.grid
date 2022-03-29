@@ -522,13 +522,15 @@ save_plate_calibration <- function(plate) {
 #' @export
 
 use_calibration_from <- function(acceptor, donor) {
-  donor$path          <- acceptor$path
-  donor$anno          <- acceptor$anno
-  donor$grid$template <- acceptor$anno$template
-  donor$grid$position <- acceptor$anno$position
-  donor$grid$group    <- acceptor$anno$group
-  donor$crop$template <- acceptor$anno$template
-  donor$crop$position <- acceptor$anno$position
+  donor$path                      <- acceptor$path
+  donor$anno                      <- acceptor$anno
+  donor$grid$template             <- acceptor$anno$template
+  donor$grid$position             <- acceptor$anno$position
+  donor$grid$group                <- acceptor$anno$group
+  donor$grid$strain_collection_id <- acceptor$anno$strain_collection_id
+  donor$grid$plate                <- acceptor$anno$plate
+  donor$crop$template             <- acceptor$anno$template
+  donor$crop$position             <- acceptor$anno$position
   result <- update_plate(donor)
   return(invisible(result))
 }
